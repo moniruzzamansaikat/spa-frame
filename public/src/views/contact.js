@@ -1,5 +1,40 @@
 export default async function renderContacts(container) {
-  container.innerHTML = '<h2 style="font-family: sans-serif; color: #555;">Loading contacts...</h2>';
+  // Inject CSS styles specific to this view
+  const styleId = 'contacts-view-style';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .contacts-container {
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .contacts-title {
+        color: #2c3e50;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 10px;
+      }
+      .contacts-list {
+        list-style: none;
+        padding: 0;
+      }
+      .contacts-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      .contacts-email {
+        color: #777;
+      }
+      .contacts-error {
+        color: red;
+        font-family: sans-serif;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  container.innerHTML = '<h2 class="contacts-title">Loading contacts...</h2>';
 
   try {
     // Simulate fetching fake data from a placeholder API
@@ -7,22 +42,22 @@ export default async function renderContacts(container) {
     const users = await response.json();
 
     const contactList = users.map(user => `
-      <li style="padding: 10px; border-bottom: 1px solid #eee;">
+      <li class="contacts-item">
         <strong>${user.name}</strong><br/>
-        <small style="color: #777;">${user.email}</small>
+        <small class="contacts-email">${user.email}</small>
       </li>
     `).join('');
 
     container.innerHTML = `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #2c3e50; border-bottom: 2px solid #ccc; padding-bottom: 10px;">Contacts</h2>
-        <ul style="list-style: none; padding: 0;">
+      <div class="contacts-container">
+        <h2 class="contacts-title">Contacts</h2>
+        <ul class="contacts-list">
           ${contactList}
         </ul>
       </div>
     `;
   } catch (error) {
-    container.innerHTML = `<p style="color:red; font-family: sans-serif;">Failed to load contacts.</p>`;
+    container.innerHTML = `<p class="contacts-error">Failed to load contacts.</p>`;
     console.error('Error loading contacts:', error);
   }
 }
